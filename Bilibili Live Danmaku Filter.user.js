@@ -67,7 +67,8 @@ var config={
                 '    .invisibleDanmaku{opacity:0 !important;}\n' +
                 '    .SubtitleTextBodyFrame::-webkit-scrollbar {display: none;}' +
                 '    </style>');
-            $(".icon-left-part").append('<span data-v-b74ea690="" id="regexSettings" title="正则屏蔽设置" class="icon-item icon-font icon-block"></span>');
+            $(".icon-left-part").append('<span data-v-b74ea690="" id="regexOn" title="开启过滤" class="icon-item icon-font icon-block" style="color: royalblue"></span>');
+            $(".icon-left-part").append('<span data-v-b74ea690="" id="regexSettings" title="正则过滤设置" class="icon-item icon-font icon-config" style="color: royalblue"></span>');
             if (config.BLDFNeedSubBody) {
                 $("#gift-control-vm").before('<div class="SubtitleBody"><div style="height:100%;position:relative;"><div class="SubtitleTextBodyFrame"><div class="SubtitleTextBody"></div></div></div></div>');
                 $(".bilibili-live-player").append('<div class="SubtitleBody Fullscreen ui-resizable"><div style="height:100%;position:relative;"><div class="SubtitleTextBodyFrame"><div class="SubtitleTextBody"></div></div></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div></div>');
@@ -105,7 +106,19 @@ var config={
             }
             if (config.BLDFAutoStart) startInterval();
             $("#regexSettings").click(function () {
+                window.open("https://yuyuyzl.github.io/BiliDMFilter/");
+            });
 
+            $("#regexOn").click(function () {
+                if (intervalID >= 0) {
+                    clearInterval(intervalID);
+                    $(".bilibili-danmaku").each(function (i, obj) {
+                        $(obj).removeClass("invisibleDanmaku");
+                    });
+                    intervalID=-1;
+
+                }
+                else startInterval();
             });
         }, 3000);
 
