@@ -1,16 +1,63 @@
 <html lang="en"><head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>jQuery UI Dialog - Modal confirmation</title>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
-    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.15.0/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap-reboot.min.css">
 
 </head>
 <body>
+<!--
+    "BLDFAutoStart": true,
+    "BLDFIntervalDelay": 20,
+    "BLDFNeedSubBody": true,
+    "BLDFRegex": "(?<=[“【]).*(?=[】”])",
+    "BLDFShowDanmaku": false,
+    "BLDFShowMatchedDanmakuText": true,
+    "BLDFShowOtherDanmaku": false
+-->
+<div class="settings-container container">
 
-<div class="settings-container">
+
+        <h1 style="margin-bottom: 24px">配置</h1>
+        <form>
+            <div class="form-group">
+                <label for="BLDFRegex">BLDFRegex</label>
+                <input type="text" class="form-control" id="BLDFRegex" placeholder="" disabled>
+            </div>
+            <div class="form-group">
+                <label for="BLDFIntervalDelay">BLDFIntervalDelay</label>
+                <input type="number" class="form-control" id="BLDFIntervalDelay" placeholder="" disabled>
+            </div>
+            <div class="custom-control custom-checkbox form-group">
+                <input type="checkbox" class="custom-control-input" id="BLDFAutoStart" disabled>
+                <label class="custom-control-label" for="BLDFAutoStart">BLDFAutoStart</label>
+            </div>
+            <div class="custom-control custom-checkbox form-group">
+                <input type="checkbox" class="custom-control-input" id="BLDFNeedSubBody" disabled>
+                <label class="custom-control-label" for="BLDFNeedSubBody">BLDFNeedSubBody</label>
+            </div>
+            <div class="custom-control custom-checkbox form-group">
+                <input type="checkbox" class="custom-control-input" id="BLDFShowDanmaku" disabled>
+                <label class="custom-control-label" for="BLDFShowDanmaku">BLDFShowDanmaku</label>
+            </div>
+            <div class="custom-control custom-checkbox form-group">
+                <input type="checkbox" class="custom-control-input" id="BLDFShowMatchedDanmakuText" disabled>
+                <label class="custom-control-label" for="BLDFShowMatchedDanmakuText">BLDFShowMatchedDanmakuText</label>
+            </div>
+            <div class="custom-control custom-checkbox form-group">
+                <input type="checkbox" class="custom-control-input" id="BLDFShowOtherDanmaku" disabled>
+                <label class="custom-control-label" for="BLDFShowOtherDanmaku">BLDFShowOtherDanmaku</label>
+            </div>
+            <button class="btn btn-primary">提交</button>
+            <a class="btn btn-primary" href="Bilibili%20Live%20Danmaku%20Filter.user.js">安装</a>
+        </form>
+
+
 
 </div>
 
