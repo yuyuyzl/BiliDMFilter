@@ -46,6 +46,7 @@ var config={
     };
     reloadConfig();
     if(window.location.href.match(/.*live.bilibili.com.*/)) {
+        if((GM_getValue("UpdateTime"))==null)GM_setValue("UpdateTime","NAN");
         updateTime=GM_getValue("UpdateTime");
         setTimeout(function () {
 
