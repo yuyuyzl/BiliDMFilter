@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bilibili Live Danmaku Filter
-// @namespace    http://tampermonkey.net/
-// @version      0.4.0
+// @namespace    https://yuyuyzl.github.io/BiliDMFilter/
+// @version      0.4.1
 // @description  使用一个简单的定时器把弹幕按照给定的正则表达式过滤一遍，征求更好的实现方式中
 // @supportURL   http://nga.178.com/read.php?tid=17690584
 // @author       yuyuyzl
@@ -13,11 +13,13 @@
 // @grant        GM_setClipboard
 // @grant        GM_info
 // @match        *://live.bilibili.com/*
-// @match        */BiliDMFilter/*
+// @match        *://yuyuyzl.github.io/BiliDMFilter/*
+// @match        *://localhost*BiliDMFilter/*
 // ==/UserScript==
 
 var BLDFReg;
 var intervalID=-1;
+var updateTime="";
 var config={
     "BLDFAutoStart": true,
     "BLDFIntervalDelay": 20,
@@ -44,7 +46,7 @@ var config={
     };
     reloadConfig();
     if(window.location.href.match(/.*live.bilibili.com.*/)) {
-
+        updateTime=GM_getValue("UpdateTime");
         setTimeout(function () {
 
             // 以下CSS以及字幕框元素来自SOW社团的自动字幕组件
@@ -67,7 +69,7 @@ var config={
                 '    .invisibleDanmaku{opacity:0 !important;}\n' +
                 '    .SubtitleTextBodyFrame::-webkit-scrollbar {display: none;}' +
                 '    </style>');
-            $(".icon-left-part").append('<span data-v-b74ea690="" id="regexOn" title="开启过滤" class="icon-item icon-font icon-block" style="color: royalblue"></span>');
+            $(".icon-left-part").append('<span data-v-b74ea690="" id="regexOn" title="开关过滤" class="icon-item icon-font icon-block" style="color: royalblue"></span>');
             $(".icon-left-part").append('<span data-v-b74ea690="" id="regexSettings" title="正则过滤设置" class="icon-item icon-font icon-config" style="color: royalblue"></span>');
             if (config.BLDFNeedSubBody) {
                 $("#gift-control-vm").before('<div class="SubtitleBody"><div style="height:100%;position:relative;"><div class="SubtitleTextBodyFrame"><div class="SubtitleTextBody"></div></div></div></div>');
@@ -75,10 +77,15 @@ var config={
                 $(".SubtitleBody.Fullscreen").draggable();
             }
             var startInterval = function () {
+
                 if (config.BLDFRegex == null) return;
                 if (intervalID >= 0) clearInterval(intervalID);
                 BLDFReg = new RegExp(config.BLDFRegex);
                 intervalID = setInterval(function () {
+                    if(updateTime!=GM_getValue("UpdateTime")){
+                        reloadConfig();
+                        startInterval();
+                    }
                     $(".bilibili-danmaku").each(function (i, obj) {
                         if (!(obj.innerText[obj.innerText.length - 1] == " ")) {
                             if (!config.BLDFShowDanmaku) $(obj).addClass("invisibleDanmaku");
