@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bilibili Live Danmaku Filter
-// @namespace    https://yuyuyzl.github.io/BiliDMFilter/
-// @version      0.4.1
+// @namespace    http://tampermonkey.net/
+// @version      0.4.2
 // @description  使用一个简单的定时器把弹幕按照给定的正则表达式过滤一遍，征求更好的实现方式中
 // @supportURL   http://nga.178.com/read.php?tid=17690584
 // @author       yuyuyzl
@@ -83,7 +83,9 @@ var config={
                 BLDFReg = new RegExp(config.BLDFRegex);
                 intervalID = setInterval(function () {
                     if(updateTime!=GM_getValue("UpdateTime")){
+                        updateTime=GM_getValue("UpdateTime");
                         reloadConfig();
+                        $('.SubtitleTextBody').prepend("<p style='color: gray'>" + "已更新配置" + "</p>");
                         startInterval();
                     }
                     $(".bilibili-danmaku").each(function (i, obj) {
@@ -123,9 +125,12 @@ var config={
                         $(obj).removeClass("invisibleDanmaku");
                     });
                     intervalID=-1;
-
+                    $('.SubtitleTextBody').prepend("<p style='color: gray'>" + "弹幕过滤停止" + "</p>");
                 }
-                else startInterval();
+                else {
+                    $('.SubtitleTextBody').prepend("<p style='color: gray'>" + "弹幕过滤开始" + "</p>");
+                    startInterval();
+                }
             });
         }, 3000);
 
