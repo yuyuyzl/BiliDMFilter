@@ -20,40 +20,40 @@
     "BLDFShowMatchedDanmakuText": true,
     "BLDFShowOtherDanmaku": false
 -->
-<div class="settings-container container">
+<div class="settings-container container" style="padding-top: 56px">
 
 
-        <h1 style="margin-bottom: 24px">配置</h1>
+        <h1 style="margin-bottom: 24px">哔哩哔哩弹幕高级过滤 - 配置</h1>
         <form>
             <div class="form-group">
-                <label for="BLDFRegex">BLDFRegex</label>
+                <label for="BLDFRegex">过滤时使用的正则表达式</label>
                 <input type="text" class="form-control" id="BLDFRegex" placeholder="" disabled>
             </div>
             <div class="form-group">
-                <label for="BLDFIntervalDelay">BLDFIntervalDelay</label>
+                <label for="BLDFIntervalDelay">两次重复检查弹幕之间的时间间隔</label>
                 <input type="number" class="form-control" id="BLDFIntervalDelay" placeholder="" disabled>
             </div>
             <div class="custom-control custom-checkbox form-group">
                 <input type="checkbox" class="custom-control-input" id="BLDFAutoStart" disabled>
-                <label class="custom-control-label" for="BLDFAutoStart">BLDFAutoStart</label>
+                <label class="custom-control-label" for="BLDFAutoStart">进入直播间立即开始过滤</label>
             </div>
             <div class="custom-control custom-checkbox form-group">
                 <input type="checkbox" class="custom-control-input" id="BLDFNeedSubBody" disabled>
-                <label class="custom-control-label" for="BLDFNeedSubBody">BLDFNeedSubBody</label>
+                <label class="custom-control-label" for="BLDFNeedSubBody">开启字幕框</label>
             </div>
             <div class="custom-control custom-checkbox form-group">
                 <input type="checkbox" class="custom-control-input" id="BLDFShowDanmaku" disabled>
-                <label class="custom-control-label" for="BLDFShowDanmaku">BLDFShowDanmaku</label>
+                <label class="custom-control-label" for="BLDFShowDanmaku">显示弹幕（替代哔哩哔哩自带弹幕开关）</label>
             </div>
             <div class="custom-control custom-checkbox form-group">
                 <input type="checkbox" class="custom-control-input" id="BLDFShowMatchedDanmakuText" disabled>
-                <label class="custom-control-label" for="BLDFShowMatchedDanmakuText">BLDFShowMatchedDanmakuText</label>
+                <label class="custom-control-label" for="BLDFShowMatchedDanmakuText">在浮动弹幕中显示过滤结果（不勾选则显示原文）</label>
             </div>
             <div class="custom-control custom-checkbox form-group">
                 <input type="checkbox" class="custom-control-input" id="BLDFShowOtherDanmaku" disabled>
-                <label class="custom-control-label" for="BLDFShowOtherDanmaku">BLDFShowOtherDanmaku</label>
+                <label class="custom-control-label" for="BLDFShowOtherDanmaku">显示不匹配正则表达式的其他弹幕</label>
             </div>
-            <button class="btn btn-primary">提交</button>
+            <button class="btn btn-primary" id="BLDFSettingsSave" disabled>保存设置</button>
             <a class="btn btn-primary" href="Bilibili%20Live%20Danmaku%20Filter.user.js">安装</a>
         </form>
 

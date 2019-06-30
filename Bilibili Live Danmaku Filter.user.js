@@ -113,14 +113,21 @@ var config={
 
     if(window.location.href.match(/.*\/BiliDMFilter\/.*/)){
         console.log(config);
+        $("#BLDFSettingsSave").removeAttr("disabled");
         Object.keys(config).forEach(function(key){
             $("#"+key).removeAttr("disabled");
             console.log(typeof config[key]);
             if (typeof config[key]=="string"||typeof config[key]=="number")$("#"+key).val(config[key]);
             if (typeof config[key]=="boolean")$("#"+key).attr("checked", config[key]);
-
-
         });
+        $('#BLDFSettingsSave').click(function () {
+            GM_setValue("UpdateTime",new Date());
+            Object.keys(config).forEach(function(key){
+                if (typeof config[key]=="string")GM_setValue(key,$("#"+key).val());
+                if (typeof config[key]=="number")GM_setValue(key,parseInt($("#"+key).val()));
+                if (typeof config[key]=="boolean")GM_setValue(key,$("#"+key).is(':checked'));
+            });
+        })
 
     }
 
