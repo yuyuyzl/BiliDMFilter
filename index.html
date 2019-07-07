@@ -29,6 +29,28 @@
                 <label for="BLDFRegex">过滤时使用的正则表达式</label>
                 <input type="text" class="form-control" id="BLDFRegex" placeholder="" disabled>
             </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">原文</th>
+                    <th scope="col">匹配结果</th>
+                </tr>
+                </thead>
+                <tbody id="regexTbody">
+
+                <tr>
+                    <td>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">自定义</span>
+                            </div>
+                            <input type="text" class="form-control" id="regexExampleInput" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                        </div>
+                    </td>
+                    <td id="regexExampleRes"></td>
+                </tr>
+                </tbody>
+            </table>
             <div class="form-group">
                 <label for="BLDFIntervalDelay">两次重复检查弹幕之间的时间间隔</label>
                 <input type="number" class="form-control" id="BLDFIntervalDelay" placeholder="" disabled>
@@ -61,5 +83,34 @@
 
 </div>
 
+<script>
+    var examples=['普通弹幕','【中文方括号】','人名：【中文方括号】','“中文引号”','【一半的中文方括号'];
+    for(var i=examples.length-1;i>=0;i--){
+        $('#regexTbody').prepend('<tr class="regexTr">\n' +
+            '                    <td class="regex1">\n' +examples[i]+
+            '                    </td>\n' +
+            '                    <td class="regex2">\n' +
+            '                    </td>\n' +
+            '                </tr>')
+    }
+    var refreshExample=function () {
+        try{
+            var t=new RegExp($('#BLDFRegex').val());
+        }catch (e) {
+            $('#BLDFRegex').addClass("is-invalid");
+            return;
+        }
+        $('#BLDFRegex').removeClass("is-invalid");
+        $('.regexTr').each(function(i,obj){
+            $('.regex2').eq(i).text($('.regex1').eq(i).text().match($('#BLDFRegex').val())==null?"空":$('.regex1').eq(i).text().match($('#BLDFRegex').val()));
+        });
+        $('#regexExampleRes').text($('#regexExampleInput').val().match($('#BLDFRegex').val())==null?"空":$('#regexExampleInput').val().match($('#BLDFRegex').val()));
+    }
 
-</body></html>
+    $("#BLDFRegex").keyup(refreshExample);
+    $("#regexExampleInput").keyup(refreshExample);
+    setTimeout(refreshExample,500);
+</script>
+
+</body>
+</html>
