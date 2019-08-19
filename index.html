@@ -29,7 +29,7 @@
                 <label for="BLDFRegex">过滤时使用的正则表达式</label>
                 <input type="text" class="form-control" id="BLDFRegex" placeholder="" disabled>
             </div>
-            <table class="table">
+            <table class="table" id="tableMatchExample">
                 <thead>
                 <tr>
                     <th scope="col">原文</th>
@@ -55,6 +55,22 @@
                 <label for="BLDFIntervalDelay">两次重复检查弹幕之间的时间间隔</label>
                 <input type="number" class="form-control" id="BLDFIntervalDelay" placeholder="" disabled>
             </div>
+            <div class="form-group">
+                <label for="BLDFOtherDanmakuOpacity">其他弹幕（不匹配，非同传）的不透明度（透明 0-100 不透明）（需刷新页面）</label>
+                <input type="number" class="form-control" id="BLDFOtherDanmakuOpacity" placeholder="" disabled>
+            </div>
+            <div class="form-group">
+                <label for="BLDFMatchedDanmakuOpacity">同传弹幕（匹配）的不透明度（透明 0-100 不透明）（需刷新页面）</label>
+                <input type="number" class="form-control" id="BLDFMatchedDanmakuOpacity" placeholder="" disabled>
+            </div>
+            <div class="form-group">
+                <label for="BLDFMatchedDanmakuColor">同传弹幕（匹配）的文字颜色（CSS兼容即可，例如#FFFFFF为白色，留空为不改变）（需刷新页面）</label>
+                <input type="text" class="form-control" id="BLDFMatchedDanmakuColor" placeholder="" disabled>
+            </div>
+            <div class="form-group">
+                <label for="BLDFMatchedDanmakuShadow">同传弹幕（匹配）的阴影颜色（CSS兼容即可，例如#FFFFFF为白色，留空为不改变）（需刷新页面）</label>
+                <input type="text" class="form-control" id="BLDFMatchedDanmakuShadow" placeholder="" disabled>
+            </div>
             <div class="custom-control custom-checkbox form-group">
                 <input type="checkbox" class="custom-control-input" id="BLDFAutoStart" disabled>
                 <label class="custom-control-label" for="BLDFAutoStart">进入直播间立即开始过滤</label>
@@ -64,16 +80,8 @@
                 <label class="custom-control-label" for="BLDFNeedSubBody">开启字幕框（需刷新页面）</label>
             </div>
             <div class="custom-control custom-checkbox form-group">
-                <input type="checkbox" class="custom-control-input" id="BLDFShowDanmaku" disabled>
-                <label class="custom-control-label" for="BLDFShowDanmaku">显示弹幕（替代哔哩哔哩自带弹幕开关）</label>
-            </div>
-            <div class="custom-control custom-checkbox form-group">
                 <input type="checkbox" class="custom-control-input" id="BLDFShowMatchedDanmakuText" disabled>
                 <label class="custom-control-label" for="BLDFShowMatchedDanmakuText">在浮动弹幕中显示过滤结果（不勾选则显示原文）</label>
-            </div>
-            <div class="custom-control custom-checkbox form-group">
-                <input type="checkbox" class="custom-control-input" id="BLDFShowOtherDanmaku" disabled>
-                <label class="custom-control-label" for="BLDFShowOtherDanmaku">显示不匹配正则表达式的其他弹幕</label>
             </div>
             <div class="custom-control custom-checkbox form-group">
                 <input type="checkbox" class="custom-control-input" id="BLDFRecord" disabled>
@@ -114,6 +122,10 @@
     $("#BLDFRegex").keyup(refreshExample);
     $("#regexExampleInput").keyup(refreshExample);
     setTimeout(refreshExample,500);
+    $("#tableMatchExample").hide();
+    $("#BLDFRegex")[0].onfocus=function () {
+        $("#tableMatchExample").show();
+    };
 </script>
 
 </body>

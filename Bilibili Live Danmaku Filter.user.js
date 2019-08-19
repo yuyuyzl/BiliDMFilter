@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bilibili Live Danmaku Filter
 // @namespace    http://tampermonkey.net/
-// @version      0.4.2
+// @version      0.5
 // @description  使用一个简单的定时器把弹幕按照给定的正则表达式过滤一遍，征求更好的实现方式中
 // @supportURL   http://nga.178.com/read.php?tid=17690584
 // @author       yuyuyzl
@@ -25,9 +25,12 @@ var config={
     "BLDFIntervalDelay": 20,
     "BLDFNeedSubBody": true,
     "BLDFRegex": "(?<=[“【]).*(?=[】”])",
-    "BLDFShowDanmaku": false,
     "BLDFShowMatchedDanmakuText": true,
-    "BLDFShowOtherDanmaku": false
+    "BLDFRecord": false,
+    "BLDFOtherDanmakuOpacity":50,
+    "BLDFMatchedDanmakuOpacity":100,
+    "BLDFMatchedDanmakuColor":"",
+    "BLDFMatchedDanmakuShadow":""
 };
 
 (function() {
@@ -48,7 +51,9 @@ var config={
     if(window.location.href.match(/.*live.bilibili.com.*/)) {
         if((GM_getValue("UpdateTime"))==null)GM_setValue("UpdateTime","NAN");
         updateTime=GM_getValue("UpdateTime");
-        setTimeout(function () {
+        var main=setInterval(function () {
+            if($(".icon-left-part").length==0)return;
+            clearInterval(main);
 
             // 以下CSS以及字幕框元素来自SOW社团的自动字幕组件
             // 发布帖链接：http://nga.178.com/read.php?tid=17180967
@@ -68,10 +73,16 @@ var config={
                 '    .bilibili-live-player[data-player-state=fullscreen] .SubtitleBody.Fullscreen,.bilibili-live-player[data-player-state=web-fullscreen] .SubtitleBody.Fullscreen{display:block;}\n' +
                 '    .bilibili-lmp-video-wrapper[data-mode=fullScreen] .SubtitleBody.Fullscreen,.bilibili-lmp-video-wrapper[data-orientation=landscape] .SubtitleBody.Fullscreen{display:block;}\n' +
                 '    .invisibleDanmaku{opacity:0 !important;}\n' +
+                '    .BLDF .bilibili-danmaku{opacity:'+(config.BLDFOtherDanmakuOpacity/100)+' !important;}\n' +
+                '    .BLDF .bilibili-danmaku.matched-danmaku{'+
+                'opacity:'+(config.BLDFMatchedDanmakuOpacity/100)+' !important;'+
+                (config.BLDFMatchedDanmakuColor!=""?'color:'+config.BLDFMatchedDanmakuColor+' !important;':"")+
+                (config.BLDFMatchedDanmakuShadow!=""?'text-shadow: '+config.BLDFMatchedDanmakuShadow+' 1px 0px 1px, '+config.BLDFMatchedDanmakuShadow+' 0px 1px 1px, '+config.BLDFMatchedDanmakuShadow+' 0px -1px 1px, '+config.BLDFMatchedDanmakuShadow+' -1px 0px 1px !important;':"")+
+                '}\n' +
                 '    .SubtitleTextBodyFrame::-webkit-scrollbar {display: none;}' +
                 '    </style>');
-            $(".icon-left-part").append('<span data-v-b74ea690="" id="regexOn" title="开关过滤" class="icon-item icon-font icon-block" style="color: royalblue"></span>');
-            $(".icon-left-part").append('<span data-v-b74ea690="" id="regexSettings" title="正则过滤设置" class="icon-item icon-font icon-config" style="color: royalblue"></span>');
+            $(".icon-left-part").append('<span id="regexOn" title="开关过滤" class="icon-item icon-font icon-block" style="color: royalblue;margin: 0 5px;font-size: 20px;vertical-align: middle;"></span>');
+            $(".icon-left-part").append('<span id="regexSettings" title="正则过滤设置" class="icon-item icon-font icon-config" style="color: royalblue;margin: 0 5px;font-size: 20px;vertical-align: middle;"></span>');
             if (config.BLDFNeedSubBody) {
                 $("#gift-control-vm").before('<div class="SubtitleBody"><div style="height:100%;position:relative;"><div class="SubtitleTextBodyFrame"><div class="SubtitleTextBody"></div></div></div></div>');
                 $(".bilibili-live-player").append('<div class="SubtitleBody Fullscreen ui-resizable"><div style="height:100%;position:relative;"><div class="SubtitleTextBodyFrame"><div class="SubtitleTextBody"></div></div></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div></div>');
@@ -90,31 +101,44 @@ var config={
                         startInterval();
                     }
                     $(".bilibili-danmaku").each(function (i, obj) {
-                        if (!(obj.innerText[obj.innerText.length - 1] == " ")) {
-                            if (!config.BLDFShowDanmaku) $(obj).addClass("invisibleDanmaku");
+                        //console.log(obj.innerHTML);
+                        if (!(obj.innerHTML.substr(-7) == "</span>")) {
+                            $(obj).removeClass("matched-danmaku");
                             var matchres = obj.innerText.match(BLDFReg);
                             console.log(obj.innerText);
                             if (matchres != null && matchres != "") {
-                                if (config.BLDFShowDanmaku) $(obj).removeClass("invisibleDanmaku");
+                                //if (config.BLDFShowDanmaku) $(obj).removeClass("invisibleDanmaku");
+                                $(obj).addClass("matched-danmaku");
                                 //console.log(matchres);
                                 $('.SubtitleTextBody').prepend("<p>" + matchres + "</p>");
+                                /*
                                 $('.SubtitleTextBody').each(function (i, obj) {
                                     $(obj).children().each(function (i, obj) {
                                         if (i >= 6) {
                                             //obj.remove();
                                         }
                                     });
-                                });
-                                if (config.BLDFShowMatchedDanmakuText) obj.innerText = matchres + ' '; else obj.innerText = obj.innerText + ' ';
+                                });//*/
+                                if (config.BLDFShowMatchedDanmakuText) obj.innerHTML = matchres + '<span></span>'; else obj.innerHTML = obj.innerHTML + '<span></span>';
+                                if(config.BLDFRecord){
+                                    var ls=localStorage.getItem("record");
+                                    if (ls==null)ls=[];else ls=JSON.parse(ls);
+                                    ls.push({time:new Date().getTime(),text:matchres[0]});
+                                    localStorage.setItem("record",JSON.stringify(ls));
+                                }
                             } else {
-                                obj.innerText = obj.innerText + ' ';
-                                if (!config.BLDFShowOtherDanmaku) $(obj).addClass("invisibleDanmaku");
+                                obj.innerHTML = obj.innerHTML + '<span></span>';
+                                //if (!config.BLDFShowOtherDanmaku) $(obj).addClass("invisibleDanmaku");
                             }
+                        }
+                        if($(obj).hasClass("matched-danmaku")&& $(obj).offset().left+$(obj).width()<$(".bilibili-live-player-video-danmaku").offset().left){
+                            //console.log("stopped");
+                            $(obj).removeClass("matched-danmaku");
                         }
                     })
                 }, config.BLDFIntervalDelay);
             }
-            if (config.BLDFAutoStart) startInterval();
+
             $("#regexSettings").click(function () {
                 window.open("https://yuyuyzl.github.io/BiliDMFilter/");
             });
@@ -122,6 +146,7 @@ var config={
             $("#regexOn").click(function () {
                 if (intervalID >= 0) {
                     clearInterval(intervalID);
+                    $(".bilibili-live-player-video-danmaku").removeClass("BLDF");
                     $(".bilibili-danmaku").each(function (i, obj) {
                         $(obj).removeClass("invisibleDanmaku");
                     });
@@ -129,11 +154,15 @@ var config={
                     $('.SubtitleTextBody').prepend("<p style='color: gray'>" + "弹幕过滤停止" + "</p>");
                 }
                 else {
+                    $(".bilibili-live-player-video-danmaku").addClass("BLDF");
                     $('.SubtitleTextBody').prepend("<p style='color: gray'>" + "弹幕过滤开始" + "</p>");
                     startInterval();
                 }
             });
-        }, 3000);
+            if (config.BLDFAutoStart) {
+                $("#regexOn").click();
+            }
+        }, 100);
 
     }else
 
