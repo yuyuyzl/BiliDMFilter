@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Bilibili Live Danmaku Filter
 // @namespace    http://tampermonkey.net/
-// @version      0.5
-// @description  使用一个简单的定时器把弹幕按照给定的正则表达式过滤一遍，征求更好的实现方式中
+// @version      0.5.1
+// @description  使用一个简单的定时器把弹幕按照给定的正则表达式过滤一遍
 // @supportURL   http://nga.178.com/read.php?tid=17690584
 // @author       yuyuyzl
 // @require      https://code.jquery.com/jquery-3.4.0.min.js
@@ -110,7 +110,7 @@ var config={
                                 //if (config.BLDFShowDanmaku) $(obj).removeClass("invisibleDanmaku");
                                 $(obj).addClass("matched-danmaku");
                                 //console.log(matchres);
-                                $('.SubtitleTextBody').prepend("<p>" + matchres + "</p>");
+                                $('.SubtitleTextBody').prepend($("<p></p>").text(matchres));
                                 /*
                                 $('.SubtitleTextBody').each(function (i, obj) {
                                     $(obj).children().each(function (i, obj) {
@@ -119,17 +119,15 @@ var config={
                                         }
                                     });
                                 });//*/
-                                if (config.BLDFShowMatchedDanmakuText) obj.innerHTML = matchres + '<span></span>'; else obj.innerHTML = obj.innerHTML + '<span></span>';
+                                if (config.BLDFShowMatchedDanmakuText) $(obj).text(matchres);
                                 if(config.BLDFRecord){
                                     var ls=localStorage.getItem("record");
                                     if (ls==null)ls=[];else ls=JSON.parse(ls);
                                     ls.push({time:new Date().getTime(),text:matchres[0]});
                                     localStorage.setItem("record",JSON.stringify(ls));
                                 }
-                            } else {
-                                obj.innerHTML = obj.innerHTML + '<span></span>';
-                                //if (!config.BLDFShowOtherDanmaku) $(obj).addClass("invisibleDanmaku");
                             }
+                            obj.innerHTML = obj.innerHTML + '<span></span>';
                         }
                         if($(obj).hasClass("matched-danmaku")&& $(obj).offset().left+$(obj).width()<$(".bilibili-live-player-video-danmaku").offset().left){
                             //console.log("stopped");
