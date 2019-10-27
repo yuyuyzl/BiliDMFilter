@@ -106,9 +106,9 @@
         }
         $('#BLDFRegex').removeClass("is-invalid");
         $('.regexTr').each(function(i,obj){
-            $('.regex2').eq(i).text($('.regex1').eq(i).text().match($('#BLDFRegex').val())==null?"空":$('.regex1').eq(i).text().match($('#BLDFRegex').val()).pop());
+            $('.regex2').eq(i).text($('.regex1').eq(i).text().match($('#BLDFRegex').val())==null?"空":$('.regex1').eq(i).text().match($('#BLDFRegex').val()).filter(a=>!!a).pop());
         });
-        $('#regexExampleRes').text($('#regexExampleInput').val().match($('#BLDFRegex').val())==null?"空":$('#regexExampleInput').val().match($('#BLDFRegex').val()).pop());
+        $('#regexExampleRes').text($('#regexExampleInput').val().match($('#BLDFRegex').val())==null?"空":$('#regexExampleInput').val().match($('#BLDFRegex').val()).filter(a=>!!a).pop());
     }
 
     $("#BLDFRegex").keyup(refreshExample);
