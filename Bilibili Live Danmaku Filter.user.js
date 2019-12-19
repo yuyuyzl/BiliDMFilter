@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bilibili Live Danmaku Filter
 // @namespace    http://tampermonkey.net/
-// @version      0.6
+// @version      0.6.2
 // @description  使用一个简单的定时器把弹幕按照给定的正则表达式过滤一遍
 // @supportURL   http://nga.178.com/read.php?tid=17690584
 // @author       yuyuyzl
@@ -106,7 +106,7 @@ var config={
                         if (!(obj.innerHTML.substr(-7) == "</span>")) {
                             $(obj).removeClass("matched-danmaku");
                             var matchres = obj.innerText.match(BLDFReg);
-                            if(matchres&&matchres.length>0)matchres=matchres.pop();
+                            if(matchres&&matchres.length>0)matchres=matchres.filter(a=>!!a).pop();
                             console.log(obj.innerText);
                             if (matchres != null && matchres != "") {
                                 //if (config.BLDFShowDanmaku) $(obj).removeClass("invisibleDanmaku");
@@ -167,12 +167,12 @@ var config={
     }else
     if(window.location.href.match(/.*\/www.douyu.com\/.*/)){
         var main=setInterval(function(){
-            var danmuClassName="";
-            $("div").each((i,o)=>{
-                if($(o).attr("class") && $(o).attr("class").trim().substr(0,6)=="danmu-")danmuClassName=$(o).attr("class").trim();
-            })
-            if(danmuClassName!="")clearInterval(main);else return;
-            console.log(danmuClassName);
+        var danmuClassName="";
+        $("div").each((i,o)=>{
+            if($(o).attr("class") && $(o).attr("class").trim().substr(0,6)=="danmu-")danmuClassName=$(o).attr("class").trim();
+        })
+        if(danmuClassName!="")clearInterval(main);else return;
+        console.log(danmuClassName);
             // 以下CSS以及字幕框元素来自SOW社团的自动字幕组件
             // 发布帖链接：http://nga.178.com/read.php?tid=17180967
             $("head").append('<style type="text/css">\n' +
@@ -206,51 +206,51 @@ var config={
                 $("#room-html5-player").append('<div class="SubtitleBody Fullscreen ui-resizable"><div style="height:100%;position:relative;"><div class="SubtitleTextBodyFrame"><div class="SubtitleTextBody"></div></div></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div></div>');
                 $(".SubtitleBody.Fullscreen").draggable();
             }
-            var startInterval=function(){
-                if (config.BLDFRegex == null) return;
-                if (intervalID >= 0) clearInterval(intervalID);
-                BLDFReg = new RegExp(config.BLDFRegex);
-                intervalID = setInterval(function () {
-                    $("."+danmuClassName).children().each((i,obj)=>{
-                        if(!(obj.innerHTML.substr(-7) == "</span>")){
-                            var matchres;
-                            $(obj).children().each((i,o)=>{
+        var startInterval=function(){
+            if (config.BLDFRegex == null) return;
+            if (intervalID >= 0) clearInterval(intervalID);
+            BLDFReg = new RegExp(config.BLDFRegex);
+            intervalID = setInterval(function () {
+                $("."+danmuClassName).children().each((i,obj)=>{
+                    if(!(obj.innerHTML.substr(-7) == "</span>")){
+                        var matchres;
+                        $(obj).children().each((i,o)=>{
+                            //console.log($(o).attr("class").trim());
+                            if($(o).attr("class").trim().substr(0,5)=="text-" || $(o).attr("class").trim().substr(0,6)=="super-")matchres=$(o).text();
+                        });
+                        console.log(matchres);
+                        matchres = matchres.match(BLDFReg);
+                        //console.log(obj.innerText);
+                        if (matchres != null && matchres != "") {
+                            //if (config.BLDFShowDanmaku) $(obj).removeClass("invisibleDanmaku");
+                            $(obj).addClass("matched-danmaku");
+                            //console.log(matchres);
+                            $('.SubtitleTextBody').prepend($("<p></p>").text(matchres));
+                            /*
+                                $('.SubtitleTextBody').each(function (i, obj) {
+                                    $(obj).children().each(function (i, obj) {
+                                        if (i >= 6) {
+                                            //obj.remove();
+                                        }
+                                    });
+                                });//*/
+                            if (config.BLDFShowMatchedDanmakuText) $(obj).children().each((i,o)=>{
                                 //console.log($(o).attr("class").trim());
-                                if($(o).attr("class").trim().substr(0,5)=="text-" || $(o).attr("class").trim().substr(0,6)=="super-")matchres=$(o).text();
+                                if($(o).attr("class").trim().substr(0,5)=="text-" || $(o).attr("class").trim().substr(0,6)=="super-")$(o).text(matchres);
                             });
-                            console.log(matchres);
-                            matchres = matchres.match(BLDFReg);
-                            //console.log(obj.innerText);
-                            if (matchres != null && matchres != "") {
-                                //if (config.BLDFShowDanmaku) $(obj).removeClass("invisibleDanmaku");
-                                $(obj).addClass("matched-danmaku");
-                                //console.log(matchres);
-                                $('.SubtitleTextBody').prepend($("<p></p>").text(matchres));
-                                /*
-                                    $('.SubtitleTextBody').each(function (i, obj) {
-                                        $(obj).children().each(function (i, obj) {
-                                            if (i >= 6) {
-                                                //obj.remove();
-                                            }
-                                        });
-                                    });//*/
-                                if (config.BLDFShowMatchedDanmakuText) $(obj).children().each((i,o)=>{
-                                    //console.log($(o).attr("class").trim());
-                                    if($(o).attr("class").trim().substr(0,5)=="text-" || $(o).attr("class").trim().substr(0,6)=="super-")$(o).text(matchres);
-                                });
-                                if(config.BLDFRecord){
-                                    var ls=localStorage.getItem("record");
-                                    if (ls==null)ls=[];else ls=JSON.parse(ls);
-                                    ls.push({time:new Date().getTime(),text:matchres[0]});
-                                    localStorage.setItem("record",JSON.stringify(ls));
-                                }
+                            if(config.BLDFRecord){
+                                var ls=localStorage.getItem("record");
+                                if (ls==null)ls=[];else ls=JSON.parse(ls);
+                                ls.push({time:new Date().getTime(),text:matchres[0]});
+                                localStorage.setItem("record",JSON.stringify(ls));
                             }
-                            obj.innerHTML = obj.innerHTML + '<span></span>';
                         }
-                    });
-                }, config.BLDFIntervalDelay);
-            }
-            $("#regexSettings").click(function () {
+                        obj.innerHTML = obj.innerHTML + '<span></span>';
+                    }
+                });
+            }, config.BLDFIntervalDelay);
+        }
+        $("#regexSettings").click(function () {
                 window.open("https://yuyuyzl.github.io/BiliDMFilter/");
             });
 
@@ -273,7 +273,7 @@ var config={
             if (config.BLDFAutoStart) {
                 $("#regexOn").click();
             }
-        },100);
+    },100);
 
     }else
 
