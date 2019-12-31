@@ -63,6 +63,10 @@
                 <label for="BLDFMatchedDanmakuShadow">同传弹幕（匹配）的阴影颜色（CSS兼容即可，例如#FFFFFF为白色，留空为不改变）（需刷新页面）</label>
                 <input type="text" class="form-control" id="BLDFMatchedDanmakuShadow" placeholder="" disabled>
             </div>
+            <div class="form-group">
+                <label for="BLDFJoinLetter">人名与发言之间的分隔符（也就是合并多个()使用的连接字符串）</label>
+                <input type="text" class="form-control" id="BLDFJoinLetter" placeholder="" disabled>
+            </div>
             <div class="custom-control custom-checkbox form-group">
                 <input type="checkbox" class="custom-control-input" id="BLDFAutoStart" disabled>
                 <label class="custom-control-label" for="BLDFAutoStart">进入直播间立即开始过滤</label>
@@ -88,7 +92,7 @@
 </div>
 
 <script>
-    var examples=['普通弹幕','【中文方括号】','人名：【中文方括号】','“中文引号”','【一半的中文方括号'];
+    var examples=['普通弹幕','【中文方括号】','人名【中文方括号】','“中文引号”','【一半的中文方括号'];
     for(var i=examples.length-1;i>=0;i--){
         $('#regexTbody').prepend('<tr class="regexTr">\n' +
             '                    <td class="regex1">\n' +examples[i]+
@@ -106,9 +110,10 @@
         }
         $('#BLDFRegex').removeClass("is-invalid");
         $('.regexTr').each(function(i,obj){
-            $('.regex2').eq(i).text($('.regex1').eq(i).text().match($('#BLDFRegex').val())==null?"空":$('.regex1').eq(i).text().match($('#BLDFRegex').val()).filter(a=>!!a).pop());
+            $('.regex2').eq(i).text($('.regex1').eq(i).text().match($('#BLDFRegex').val())==null?"空":$('.regex1').eq(i).text().match($('#BLDFRegex').val()).filter(a=>a&& a.trim()).splice(1).join($('#BLDFJoinLetter').val()));
+
         });
-        $('#regexExampleRes').text($('#regexExampleInput').val().match($('#BLDFRegex').val())==null?"空":$('#regexExampleInput').val().match($('#BLDFRegex').val()).filter(a=>!!a).pop());
+        $('#regexExampleRes').text($('#regexExampleInput').val().match($('#BLDFRegex').val())==null?"空":$('#regexExampleInput').val().match($('#BLDFRegex').val()).filter(a=>a&& a.trim()).splice(1).join($('#BLDFJoinLetter').val()));
     }
 
     $("#BLDFRegex").keyup(refreshExample);

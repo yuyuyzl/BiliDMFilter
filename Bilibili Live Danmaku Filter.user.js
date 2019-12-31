@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bilibili Live Danmaku Filter
 // @namespace    http://tampermonkey.net/
-// @version      0.6
+// @version      0.7
 // @description  使用一个简单的定时器把弹幕按照给定的正则表达式过滤一遍
 // @supportURL   http://nga.178.com/read.php?tid=17690584
 // @author       yuyuyzl
@@ -25,13 +25,14 @@ var config={
     "BLDFAutoStart": true,
     "BLDFIntervalDelay": 20,
     "BLDFNeedSubBody": true,
-    "BLDFRegex": "【(.*)】",
+    "BLDFRegex": "(.*)【(.*)】|(.*)【(.*)",
     "BLDFShowMatchedDanmakuText": true,
     "BLDFRecord": false,
     "BLDFOtherDanmakuOpacity":50,
     "BLDFMatchedDanmakuOpacity":100,
     "BLDFMatchedDanmakuColor":"",
-    "BLDFMatchedDanmakuShadow":""
+    "BLDFMatchedDanmakuShadow":"",
+    "BLDFJoinLetter":"：",
 };
 
 (function() {
@@ -106,7 +107,7 @@ var config={
                         if (!(obj.innerHTML.substr(-7) == "</span>")) {
                             $(obj).removeClass("matched-danmaku");
                             var matchres = obj.innerText.match(BLDFReg);
-                            if(matchres&&matchres.length>0)matchres=matchres.pop();
+                            if(matchres&&matchres.length>0)matchres=matchres.filter(a=>a && a.trim()).splice(1).join(config.BLDFJoinLetter);
                             console.log(obj.innerText);
                             if (matchres != null && matchres != "") {
                                 //if (config.BLDFShowDanmaku) $(obj).removeClass("invisibleDanmaku");
