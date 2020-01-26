@@ -101,6 +101,13 @@
             '                    </td>\n' +
             '                </tr>')
     }
+    var processMatchedTxt=(original,regex,joinLetter)=>{
+        var matchres = original.match(regex);
+        if(matchres&&matchres.length>0)matchres=matchres.filter(a=>a && a.trim());
+        if(matchres&&matchres.length>1)matchres=matchres.splice(1);
+        if(matchres)matchres=matchres.join(joinLetter);
+        return matchres || "空";
+    }
     var refreshExample=function () {
         try{
             var t=new RegExp($('#BLDFRegex').val());
@@ -110,10 +117,12 @@
         }
         $('#BLDFRegex').removeClass("is-invalid");
         $('.regexTr').each(function(i,obj){
-            $('.regex2').eq(i).text($('.regex1').eq(i).text().match($('#BLDFRegex').val())==null?"空":$('.regex1').eq(i).text().match($('#BLDFRegex').val()).filter(a=>a&& a.trim()).splice(1).join($('#BLDFJoinLetter').val()));
+            //$('.regex2').eq(i).text($('.regex1').eq(i).text().match($('#BLDFRegex').val())==null?"空":$('.regex1').eq(i).text().match($('#BLDFRegex').val()).filter(a=>a&& a.trim()).splice(1).join($('#BLDFJoinLetter').val()));
+            $('.regex2').eq(i).text(processMatchedTxt($('.regex1').eq(i).text(),$('#BLDFRegex').val(),$('#BLDFJoinLetter').val()));
 
         });
-        $('#regexExampleRes').text($('#regexExampleInput').val().match($('#BLDFRegex').val())==null?"空":$('#regexExampleInput').val().match($('#BLDFRegex').val()).filter(a=>a&& a.trim()).splice(1).join($('#BLDFJoinLetter').val()));
+        //$('#regexExampleRes').text($('#regexExampleInput').val().match($('#BLDFRegex').val())==null?"空":$('#regexExampleInput').val().match($('#BLDFRegex').val()).filter(a=>a&& a.trim()).splice(1).join($('#BLDFJoinLetter').val()));
+        $('#regexExampleRes').text(processMatchedTxt($('#regexExampleInput').val(),$('#BLDFRegex').val(),$('#BLDFJoinLetter').val()));
     }
 
     $("#BLDFRegex").keyup(refreshExample);

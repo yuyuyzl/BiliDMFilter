@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bilibili Live Danmaku Filter
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.7.1
 // @description  使用一个简单的定时器把弹幕按照给定的正则表达式过滤一遍
 // @supportURL   http://nga.178.com/read.php?tid=17690584
 // @author       yuyuyzl
@@ -50,6 +50,15 @@ var config={
         });
     };
     reloadConfig();
+
+    var processMatchedTxt=(original,regex,joinLetter)=>{
+        var matchres = original.match(regex);
+        if(matchres&&matchres.length>0)matchres=matchres.filter(a=>a && a.trim());
+        if(matchres&&matchres.length>1)matchres=matchres.splice(1);
+        if(matchres)matchres=matchres.join(joinLetter);
+        return matchres || null;
+    }
+
     if(window.location.href.match(/.*live.bilibili.com.*/)) {
         if((GM_getValue("UpdateTime"))==null)GM_setValue("UpdateTime","NAN");
         updateTime=GM_getValue("UpdateTime");
@@ -106,8 +115,10 @@ var config={
                         //console.log(obj.innerHTML);
                         if (!(obj.innerHTML.substr(-7) == "</span>")) {
                             $(obj).removeClass("matched-danmaku");
-                            var matchres = obj.innerText.match(BLDFReg);
-                            if(matchres&&matchres.length>0)matchres=matchres.filter(a=>a && a.trim()).splice(1).join(config.BLDFJoinLetter);
+                            // var matchres = obj.innerText.match(BLDFReg);
+                            // if(matchres&&matchres.length>0)matchres=matchres.filter(a=>a && a.trim());
+                            // if(matchres.length>1)matchres=matchres.splice(1).join(config.BLDFJoinLetter);else matchres=matchres[0];
+                            let matchres=processMatchedTxt(obj.innerText,BLDFReg,config.BLDFJoinLetter);
                             console.log(obj.innerText);
                             if (matchres != null && matchres != "") {
                                 //if (config.BLDFShowDanmaku) $(obj).removeClass("invisibleDanmaku");
